@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WILL / WON'T – Future Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E8E1FA; --bg2:#DDE9FC; --paper:#FCFBFF; --ink:#3A3156; --ink-soft:#655C8C;
+  --line:#3A3156; --lav:#CDBDF5; --lav-deep:#9C86E0; --blue:#C4DDF8; --blue-deep:#5F8FD8;
+  --mint:#C2ECD7; --mint-ink:#23664A; --rose:#F9CDD8; --rose-ink:#983553; --butter:#FFE6A1;
+  --shadow:#B9A9EC;
+  --pet-ink:#2F2849; --pet-body:#C6B4F4; --pet-light:#EFE8FF; --pet-cheek:#F4A7BF;
+  --pet-sand:#F7CF6A; --pet-white:#FFFFFF; --pet-tongue:#F28DA9;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#221E36; --bg2:#262B46; --paper:#2F2A49; --ink:#F1ECFF; --ink-soft:#BDB3E2;
+    --line:#A693EE; --lav:#4A3E7A; --lav-deep:#7F6BCC; --blue:#2E456E; --blue-deep:#91B6F2;
+    --mint:#244C3D; --mint-ink:#A6EBC9; --rose:#56283A; --rose-ink:#FFB8CB; --butter:#5A4A20;
+    --shadow:#151229; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#221E36; --bg2:#262B46; --paper:#2F2A49; --ink:#F1ECFF; --ink-soft:#BDB3E2;
+  --line:#A693EE; --lav:#4A3E7A; --lav-deep:#7F6BCC; --blue:#2E456E; --blue-deep:#91B6F2;
+  --mint:#244C3D; --mint-ink:#A6EBC9; --rose:#56283A; --rose-ink:#FFB8CB; --butter:#5A4A20;
+  --shadow:#151229; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;
+  font-family:"Pixelify Sans",ui-rounded,"Trebuchet MS",system-ui,sans-serif;
+  font-size:18px;line-height:1.45;color:var(--ink);
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(45deg,var(--bg2) 25%,transparent 25%,transparent 75%,var(--bg2) 75%),
+    linear-gradient(45deg,var(--bg2) 25%,transparent 25%,transparent 75%,var(--bg2) 75%);
+  background-size:40px 40px;background-position:0 0,20px 20px;
+}
+.app{max-width:1020px;margin:0 auto;padding:18px 16px 48px}
+
+/* ---------- Title + HUD ---------- */
+.title{
+  font-family:"Silkscreen","Pixelify Sans",monospace;font-weight:700;
+  font-size:clamp(1.3rem,4.6vw,2.5rem);line-height:1.15;text-align:center;
+  margin:10px 0 20px;letter-spacing:.01em;
+  text-shadow:3px 3px 0 var(--lav),6px 6px 0 var(--blue);
+}
+.px{box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line)}
+.hud{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin:0 0 28px}
+.hud[hidden]{display:none}
+.chip{background:var(--paper);padding:6px 12px;margin:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chip-k{color:var(--ink-soft);font-size:.85rem}
+.chip-v{font-weight:700}
+.chip-level{font-family:"Silkscreen",monospace;font-size:.9rem}
+.bar{display:inline-flex;gap:2px}
+.bar i{display:block;width:11px;height:15px;background:var(--lav)}
+.bar i.on{background:var(--lav-deep)}
+.bump{animation:bump .4s ease-out}
+@keyframes bump{40%{transform:scale(1.3)}}
+
+/* ---------- Stage ---------- */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:30px;align-items:start}
+.card{
+  background:var(--paper);margin:4px;padding:clamp(18px,3.2vw,34px);min-height:380px;
+  box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line),10px 10px 0 0 var(--shadow);
+}
+.card h2{font-size:clamp(1.35rem,3vw,1.75rem);margin:0 0 10px;line-height:1.2}
+.card p{margin:0 0 12px;max-width:62ch}
+.soft{color:var(--ink-soft)}
+
+/* ---------- Pet ---------- */
+.pet-zone{position:sticky;top:16px;display:flex;flex-direction:column;align-items:center}
+.bubble{
+  position:relative;background:var(--paper);margin:4px 4px 26px;padding:10px 16px;
+  max-width:240px;min-height:48px;text-align:center;font-weight:600;font-size:1.05rem;
+}
+.bubble::before,.bubble::after{content:"";position:absolute;width:8px;height:8px;background:var(--line)}
+.bubble::after{left:calc(50% - 4px);bottom:-16px}
+.bubble::before{left:calc(50% + 4px);bottom:-26px}
+.bubble.pop{animation:pop .3s ease-out}
+@keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+.pet-col{display:flex;flex-direction:column;align-items:center}
+.pet{width:200px}
+.pet svg{display:block;width:100%;height:auto;shape-rendering:crispEdges;overflow:visible}
+.pet-bob{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.pet-shadow{width:96px;height:8px;background:var(--shadow);opacity:.55;margin-top:-4px;animation:shadow 2.6s ease-in-out infinite}
+@keyframes shadow{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.86)}}
+.pet-name{font-family:"Silkscreen",monospace;font-size:.85rem;color:var(--ink-soft);margin-top:8px}
+.pet.hop{animation:hop .5s ease-out}
+.pet.shake{animation:shake .45s ease-in-out}
+.pet.party{animation:party 1.1s ease-in-out infinite}
+@keyframes hop{0%{transform:translateY(0)}35%{transform:translateY(-16px)}70%{transform:translateY(0)}85%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes party{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-14px) rotate(-4deg)}75%{transform:translateY(-14px) rotate(4deg)}}
+
+#petSvg .o{fill:var(--pet-ink)} #petSvg .b{fill:var(--pet-body)} #petSvg .l{fill:var(--pet-light)}
+#petSvg .y{fill:var(--pet-sand)} #petSvg .w{fill:var(--pet-white)} #petSvg .k{fill:var(--pet-ink)}
+#petSvg .c{fill:var(--pet-cheek)} #petSvg .t{fill:var(--pet-tongue)}
+#petSvg .cf1{fill:#8FD6B4} #petSvg .cf2{fill:#F7CF6A} #petSvg .cf3{fill:#8DB4EA} #petSvg .cf4{fill:#F4A7BF}
+#petSvg .pup{transition:transform .14s ease-out}
+#petSvg .ant{transform-box:fill-box;transform-origin:50% 100%;animation:wobble 3.2s ease-in-out infinite}
+@keyframes wobble{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(6deg)}}
+#petSvg .confetti rect{animation:twinkle .7s steps(2) infinite}
+#petSvg .confetti rect:nth-child(2n){animation-delay:.35s}
+@keyframes twinkle{0%{opacity:1}100%{opacity:.15}}
+
+/* mood visibility */
+#petSvg .m-hap,#petSvg .m-sad,#petSvg .m-open,#petSvg .e-joy,#petSvg .e-closed,
+#petSvg .lid,#petSvg .brow,#petSvg .arms-up,#petSvg .confetti{display:none}
+#petSvg[data-mood="happy"] .m-neu{display:none} #petSvg[data-mood="happy"] .m-hap{display:inline}
+#petSvg[data-mood="sad"] .m-neu{display:none} #petSvg[data-mood="sad"] .m-sad,
+#petSvg[data-mood="sad"] .lid,#petSvg[data-mood="sad"] .brow{display:inline}
+#petSvg[data-mood="excited"] .m-neu,#petSvg[data-mood="excited"] .arms-down{display:none}
+#petSvg[data-mood="excited"] .m-open,#petSvg[data-mood="excited"] .arms-up,#petSvg[data-mood="excited"] .confetti{display:inline}
+#petSvg[data-mood="celebrate"] .m-neu,#petSvg[data-mood="celebrate"] .arms-down,#petSvg[data-mood="celebrate"] .e-open{display:none}
+#petSvg[data-mood="celebrate"] .m-open,#petSvg[data-mood="celebrate"] .arms-up,
+#petSvg[data-mood="celebrate"] .confetti,#petSvg[data-mood="celebrate"] .e-joy{display:inline}
+#petSvg.blink:not([data-mood="celebrate"]) .e-open,#petSvg.blink:not([data-mood="celebrate"]) .lid{display:none}
+#petSvg.blink:not([data-mood="celebrate"]) .e-closed{display:inline}
+
+/* ---------- Questions ---------- */
+.instr{color:var(--ink-soft);margin:0 0 8px}
+.prompt{font-size:clamp(1.25rem,3vw,1.6rem);font-weight:600;line-height:1.5;margin:4px 0 6px}
+.blank{display:inline-block;min-width:4.6em;border-bottom:4px dashed var(--lav-deep);text-align:center;padding:0 .2em;line-height:1.2}
+.blank.filled{border-bottom-style:solid;background:var(--butter)}
+.opts{display:grid;gap:18px;margin:24px 4px 4px}
+.opts.two{grid-template-columns:1fr 1fr}
+.opt{
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  font:inherit;font-size:1.12rem;color:var(--ink);background:var(--paper);border:0;
+  padding:12px 14px;cursor:pointer;
+  box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line),0 9px 0 0 var(--shadow);
+  transition:background .12s;
+}
+.opt:hover:not(:disabled){background:var(--blue)}
+.opt:active:not(:disabled){transform:translateY(3px)}
+.opt .key{flex:none;width:34px;height:34px;display:grid;place-items:center;background:var(--blue);font-family:"Silkscreen",monospace;font-weight:700}
+.opt:hover:not(:disabled) .key{background:var(--paper)}
+.opt .mark{margin-left:auto;font-family:"Silkscreen",monospace;font-weight:700}
+.opt:disabled{cursor:default}
+.opt:disabled:not(.is-correct):not(.is-wrong){opacity:.5}
+.opt.is-correct{background:var(--mint)} .opt.is-correct .key{background:var(--mint-ink);color:var(--paper)}
+.opt.is-wrong{background:var(--rose)} .opt.is-wrong .key{background:var(--rose-ink);color:var(--paper)}
+.fb{margin:30px 4px 0;padding:14px 18px}
+.fb.good{background:var(--mint)} .fb.bad{background:var(--rose)}
+.fb h3{margin:0 0 4px;font-size:1.15rem}
+.fb.good h3{color:var(--mint-ink)} .fb.bad h3{color:var(--rose-ink)}
+.fb p{margin:0}
+.actions{margin-top:26px;display:flex;justify-content:flex-end;gap:16px;flex-wrap:wrap}
+.btn{
+  font:inherit;font-weight:700;font-size:1.05rem;color:var(--ink);background:var(--lav);border:0;
+  padding:12px 22px;margin:4px 4px 10px;cursor:pointer;
+  box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line),0 9px 0 0 var(--lav-deep);
+}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(5px);box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line)}
+.btn.alt{background:var(--blue);box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line),0 9px 0 0 var(--blue-deep)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+:focus-visible{outline:3px dashed var(--blue-deep);outline-offset:8px}
+
+/* ---------- Start ---------- */
+.rules{background:var(--blue);margin:22px 4px;padding:14px 18px}
+.rules h3{margin:0 0 8px;font-size:1.1rem}
+.rule{display:grid;grid-template-columns:7.5rem 1fr;gap:4px 14px;padding:6px 0}
+.rule + .rule{border-top:2px dashed var(--blue-deep)}
+.rule b{font-weight:700}
+.rule .ex{grid-column:2;color:var(--ink-soft)}
+.fields{display:flex;flex-wrap:wrap;gap:22px 28px;margin:18px 4px 4px}
+.field{display:flex;flex-direction:column;gap:8px;flex:1 1 220px}
+.err{color:var(--rose-ink);font-weight:700;margin:14px 4px 0}
+.err[hidden]{display:none}
+.field label{font-weight:600}
+input[type=text],textarea{
+  font:inherit;font-size:1.1rem;color:var(--ink);background:var(--paper);border:0;padding:10px 12px;width:100%;
+  box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line);
+}
+textarea{resize:vertical;min-height:64px}
+input[type=text]:focus,textarea:focus{outline:3px dashed var(--blue-deep);outline-offset:6px}
+
+/* ---------- Level screens ---------- */
+.big{font-family:"Silkscreen",monospace;font-weight:700;font-size:clamp(2.6rem,9vw,4.4rem);line-height:1;margin:6px 0 10px;color:var(--lav-deep)}
+.dots{display:flex;gap:12px;margin:18px 4px}
+.dots i{display:block;width:26px;height:26px;background:var(--rose);box-shadow:0 -3px 0 0 var(--line),0 3px 0 0 var(--line),-3px 0 0 0 var(--line),3px 0 0 0 var(--line)}
+.dots i.ok{background:var(--mint-ink)}
+
+/* ---------- Writing ---------- */
+.wbox{margin:22px 0 0}
+.wbox label{display:block;font-weight:700;margin:0 4px 10px}
+.wbox textarea{margin:0 4px}
+.wfb{margin:16px 4px 0;padding:10px 14px;font-size:1rem}
+.wfb:empty{display:none}
+.wfb.good{background:var(--mint)} .wfb.bad{background:var(--rose)}
+.wfb .tip{display:block;margin-top:4px;color:var(--ink-soft)}
+.ideas{background:var(--blue);padding:8px 14px;margin:14px 4px 0;font-size:1rem}
+
+/* ---------- Final ---------- */
+.btn-pdf{
+  display:block;width:calc(100% - 8px);margin:22px 4px 14px;padding:18px 16px;
+  font-family:"Silkscreen","Pixelify Sans",monospace;font-weight:700;font-size:clamp(1rem,2.8vw,1.35rem);
+  background:var(--mint);color:var(--ink);
+  box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line),0 10px 0 0 var(--mint-ink);
+}
+.btn-pdf:active{box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line)}
+.dl-status{margin:6px 4px 0;font-weight:600;min-height:1.4em}
+.dl-status.good{color:var(--mint-ink)} .dl-status.bad{color:var(--rose-ink)}
+.final-fb{background:var(--blue);padding:12px 16px;margin:20px 4px 4px}
+.final-fb p{margin:0}
+.stars{font-size:2rem;letter-spacing:.2em;margin:4px 0 8px}
+.tbl{width:100%;border-collapse:collapse;margin:14px 0}
+.tbl td{padding:8px 4px;border-bottom:2px dashed var(--lav)}
+.tbl td:last-child{text-align:right;font-weight:700}
+.mine{margin:12px 0 0;padding:0 0 0 1.4em}
+.mine li{margin:4px 0}
+
+@media (max-width:760px){
+  .stage{grid-template-columns:1fr;gap:18px}
+  .pet-zone{order:-1;position:static;flex-direction:row;justify-content:center;gap:16px}
+  .pet-col{order:-1}
+  .pet{width:112px}
+  .pet-shadow{width:56px}
+  .bubble{margin:4px 4px 4px 18px;flex:1;max-width:none;text-align:left}
+  .bubble::after{left:-16px;top:calc(50% - 8px);bottom:auto}
+  .bubble::before{left:-26px;top:calc(50% + 0px);bottom:auto}
+  .card{min-height:0}
+  .rule{grid-template-columns:1fr}
+  .rule .ex{grid-column:1}
+}
+@media (max-width:440px){ .opts.two{grid-template-columns:1fr} body{font-size:17px} }
+@media (prefers-reduced-motion: reduce){
+  .pet-bob,.pet-shadow,.pet.party,.pet.hop,.pet.shake,#petSvg .ant,#petSvg .confetti rect,.bubble.pop,.bump{animation:none !important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1 class="title">WILL / WON'T – FUTURE QUEST</h1>
+    <div class="hud" id="hud" hidden>
+      <div class="chip px"><span class="chip-k">Player</span><span class="chip-v" id="hudName"></span></div>
+      <div class="chip px"><span class="chip-k">Score</span><span class="chip-v">⭐ <span id="hudScore">0</span> points</span></div>
+      <div class="chip px"><span class="chip-level" id="hudLevel">LEVEL 1 | QUESTION 1/5</span><span class="bar" id="hudBar" role="img" aria-label="Progress"></span></div>
+    </div>
+  </header>
+
+  <main class="stage">
+    <section class="card" id="screen" aria-live="polite"></section>
+    <aside class="pet-zone" aria-label="Tik, your pixel pet">
+      <div class="bubble px" id="bubble" role="status">Hi! I'm Tik.</div>
+      <div class="pet-col">
+        <div class="pet" id="petReact"><div class="pet-bob" id="petHolder"></div></div>
+        <div class="pet-shadow"></div>
+        <div class="pet-name">Tik</div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* =========================================================
+   1. QUESTION BANK
+   ========================================================= */
+const LEVELS = [
+  {
+    name: "Will or won't?",
+    desc: "Read each situation and decide: will it happen, or won't it?",
+    qs: [
+      { p: "I have an English test on Friday, so I ___ study tomorrow.", i: "Choose WILL or WON'T.", opts: ["will", "won't"], a: 0,
+        ex: "You have a test, so studying is the logical plan: I <b>will study</b>." },
+      { p: "I'm really tired. I ___ go to the party tonight. I'll stay at home.", i: "Choose WILL or WON'T.", opts: ["will", "won't"], a: 1,
+        ex: "You're staying at home, so the party is a no: I <b>won't go</b>." },
+      { p: "Look at those dark clouds! It ___ rain soon.", i: "Choose WILL or WON'T.", opts: ["will", "won't"], a: 0,
+        ex: "Dark clouds help us make a prediction: it <b>will rain</b>." },
+      { p: "Don't worry, I ___ tell anyone your secret. I promise!", i: "Choose WILL or WON'T.", opts: ["will", "won't"], a: 1,
+        ex: "This is a promise NOT to do something: I <b>won't tell</b>." },
+      { p: "It's very cold today, so I ___ wear my jacket.", i: "Choose WILL or WON'T.", opts: ["will", "won't"], a: 0,
+        ex: "Cold weather means a quick decision to wear a jacket: I <b>will wear</b> it." }
+    ]
+  },
+  {
+    name: "Future sentences",
+    desc: "Find the sentence with correct grammar. Remember: WILL + base verb.",
+    qs: [
+      { i: "Choose the correct sentence.", opts: ["She will goes to school tomorrow.", "She will go to school tomorrow.", "She wills go to school tomorrow."], a: 1,
+        ex: "Remember: <b>WILL + base verb</b>. No -s on <i>will</i> or on the verb: she will go." },
+      { i: "Choose the correct sentence.", opts: ["They won't to come to the party.", "They don't will come to the party.", "They won't come to the party."], a: 2,
+        ex: "<b>WON'T + base verb</b>, with no <i>to</i>: they won't come." },
+      { i: "Choose the correct question.", opts: ["Will you help me with my homework?", "You will help me with my homework?", "Do you will help me with my homework?"], a: 0,
+        ex: "Questions: <b>WILL + subject + base verb</b>? Will you help me?" },
+      { i: "Choose the correct sentence.", opts: ["I will be 15 next year.", "I will am 15 next year.", "I am will 15 next year."], a: 0,
+        ex: "The base form of am / is / are is <b>be</b>: I will be 15." },
+      { i: "Choose the correct sentence.", opts: ["We willn't play football tomorrow.", "We won't play football tomorrow.", "We will not playing football tomorrow."], a: 1,
+        ex: "<b>WILL NOT = WON'T</b>. \"Willn't\" doesn't exist, and the verb has no -ing." }
+    ]
+  },
+  {
+    name: "Future challenge",
+    desc: "Questions, short answers, affirmatives and negatives. Show what you know!",
+    qs: [
+      { p: "Will you study tomorrow?", i: "Choose the correct short answer.", opts: ["Yes, I will.", "Yes, I do.", "Yes, I am."], a: 0,
+        ex: "Short answers repeat the auxiliary: <b>Will</b> you…? Yes, I <b>will</b>." },
+      { p: "Will your friends come to the concert?", i: "Choose the correct negative short answer.", opts: ["No, they don't.", "No, they won't.", "No, they willn't."], a: 1,
+        ex: "Negative short answer: No, they <b>won't</b>." },
+      { p: "___ it be sunny on Saturday?", i: "Complete the question.", opts: ["Does", "Is", "Will"], a: 2,
+        ex: "Future questions start with <b>Will</b>: Will it be sunny on Saturday?" },
+      { p: "He will call you later.", i: "Choose the negative form of this sentence.", opts: ["He won't call you later.", "He will don't call you later.", "He doesn't will call you later."], a: 0,
+        ex: "Negative: <b>won't + base verb</b>. Don't use do / does with WILL." },
+      { p: "A: Will Sofía pass the exam?<br>B: Yes, she ___. She studies every day.", i: "Complete the answer.", opts: ["will", "does", "is"], a: 0,
+        ex: "The question uses WILL, so the short answer uses WILL: Yes, she <b>will</b>." }
+    ]
+  }
+];
+const POINTS = 10;
+const MAX_SCORE = LEVELS.length * 5 * POINTS + 3 * POINTS;
+
+/* =========================================================
+   2. WRITING CHECKER (analyzer)
+   ========================================================= */
+// ANALYZER START
+const DET = new Set(["the","a","an","my","your","his","her","our","their","its","this","that","these","those","some","all","many","most","every","no"]);
+const PRON = new Set(["i","you","he","she","it","we","they","me","him","us","them"]);
+const ADV = new Set(["also","probably","definitely","certainly","really","never","always","soon","still","just","surely","maybe","even","actually","possibly","perhaps","totally","finally","only","ever","sometimes","usually","not","definitly","probaly"]);
+const BE_FORMS = new Set(["is","am","are","was","were","been","being","'s","'re","'m"]);
+const MODALS = new Set(["can","could","must","should","would","will","shall","may","might","won't"]);
+const AUX = new Set(["does","did","don't","doesn't","didn't","dont","doesnt","didnt"]);
+const PAST = {went:"go",came:"come",saw:"see",did:"do",made:"make",took:"take",had:"have",got:"get",ate:"eat",bought:"buy",
+  gave:"give",wrote:"write",ran:"run",swam:"swim",began:"begin",drank:"drink",flew:"fly",knew:"know",found:"find",
+  thought:"think",told:"tell",said:"say",left:"leave",felt:"feel",became:"become",slept:"sleep",sat:"sit",stood:"stand",
+  spoke:"speak",lost:"lose",met:"meet",paid:"pay",sent:"send",built:"build",caught:"catch",taught:"teach",brought:"bring",
+  drove:"drive",rode:"ride",wore:"wear",chose:"choose",broke:"break",forgot:"forget",understood:"understand",won:"win",
+  heard:"hear",kept:"keep",sold:"sell",threw:"throw",grew:"grow",drew:"draw",sang:"sing",fell:"fall",held:"hold",woke:"wake",
+  spent:"spend",fought:"fight",hid:"hide",shook:"shake",stole:"steal",forgave:"forgive",gone:"go",done:"do",eaten:"eat",seen:"see",taken:"take"};
+const ING_OK = new Set(["bring","sing","ring","sting","swing","cling","fling","string","wing","spring"]);
+const ED_OK = new Set(["need","feed","speed","bleed","breed","seed","proceed","succeed","exceed","shed","wed","embed","heed","plead","read","lead","spread","shred"]);
+
+function tokenize(s){
+  const clean = s.toLowerCase()
+    .replace(/[\u2019\u2018`\u00b4]/g, "'")
+    .replace(/[^a-z\u00e0-\u00ff0-9'\s-]/g, " ")
+    .replace(/-/g, " ");
+  const out = []; let noApos = false;
+  for (let w of clean.split(/\s+/)) {
+    w = w.replace(/^'+|'+$/g, "");
+    if (!w) continue;
+    if (w === "wont") { out.push("won't"); noApos = true; continue; }
+    if (w === "willnot") { out.push("will", "not"); continue; }
+    const m = w.match(/^(.+)'ll$/);
+    if (m) { out.push(m[1], "will"); continue; }
+    out.push(w);
+  }
+  return { t: out, noApos };
+}
+
+function findModal(t, want){
+  for (let i = 0; i < t.length; i++) {
+    let neg, start = i + 1;
+    if (t[i] === "won't") neg = true;
+    else if (t[i] === "will") { if (t[i+1] === "not") { neg = true; start = i + 2; } else neg = false; }
+    else continue;
+    if (want === "aff" && neg) continue;
+    if (want === "neg" && !neg) continue;
+    const q = i === 0;
+    if (q) start += DET.has(t[start]) ? 2 : 1;   // skip the subject in a question
+    while (start < t.length && ADV.has(t[start])) start++;
+    return { i, neg, q, verb: t[start] || null };
+  }
+  return null;
+}
+
+function verbIssue(v){
+  if (!v) return "missing";
+  if (v === "to") return "to";
+  if (BE_FORMS.has(v)) return "be";
+  if (MODALS.has(v)) return "modal";
+  if (AUX.has(v)) return "aux";
+  if (DET.has(v) || PRON.has(v) || /^\d+$/.test(v)) return "missing";
+  if (PAST[v]) return "past";
+  if (v.length > 4 && v.endsWith("ing") && !ING_OK.has(v)) return "ing";
+  if (v.length > 3 && v.endsWith("ed") && !ED_OK.has(v)) return "ed";
+  if (v === "has" || v === "does" || v === "goes") return "third";
+  if (v.length > 3 && v.endsWith("s") && !v.endsWith("ss") && !v.endsWith("us")) return "third";
+  return null;
+}
+
+function baseGuess(v){
+  if (v === "has") return "have";
+  if (v === "does") return "do";
+  if (v === "goes") return "go";
+  if (/[^aeiou]ies$/.test(v)) return v.slice(0, -3) + "y";
+  if (/(ches|shes|sses|xes|zes)$/.test(v)) return v.slice(0, -2);
+  return v.slice(0, -1);
+}
+
+function issueText(code, v, word){
+  switch (code) {
+    case "missing": return `I can't find a verb after ${word}. Example: ${word.toLowerCase()} play, ${word.toLowerCase()} visit.`;
+    case "to":      return `Don't use TO after ${word}: ${word.toLowerCase()} go, not ${word.toLowerCase()} to go.`;
+    case "be":      return `Use BE after ${word}: ${word.toLowerCase()} be, not ${word.toLowerCase()} ${v}.`;
+    case "modal":   return v === "can" ? `You can't put CAN after ${word}. Try: ${word.toLowerCase()} be able to…` : `Use only one modal verb. Write ${word} + a normal verb.`;
+    case "aux":     return `Don't use DO / DOES / DID with ${word}. Just write ${word} + base verb.`;
+    case "past":    return `Use the base form, not the past: ${word.toLowerCase()} ${PAST[v]}, not ${word.toLowerCase()} ${v}.`;
+    case "ing":     return `Use the base form without -ing. Example: ${word.toLowerCase()} play, not ${word.toLowerCase()} playing.`;
+    case "ed":      return `Use the base form without -ed. Example: ${word.toLowerCase()} watch, not ${word.toLowerCase()} watched.`;
+    case "third":   return `Use the base form without -s: ${word.toLowerCase()} ${baseGuess(v)}, not ${word.toLowerCase()} ${v}.`;
+  }
+  return "";
+}
+
+const TIME_RE = /\b(tomorrow|tonight|next|soon|later|someday|one day|in the future|in \d{4}|in \d+ years|in [a-z]+ years|this (weekend|summer|winter|year|month)|when i)\b/;
+
+function checkSentence(idx, s){
+  const raw = (s || "").trim();
+  if (!raw) return { ok:false, msg:"Write a sentence first." };
+  const { t, noApos } = tokenize(raw);
+  if (t.length < 3) return { ok:false, msg:"Your sentence is very short. Use: subject + WILL / WON'T + verb + more words." };
+
+  let f;
+  if (idx === 0) {
+    f = findModal(t, "aff");
+    if (!f) return { ok:false, msg: findModal(t, "neg")
+      ? "This sentence is negative. Keep it for number 2 and write an affirmative sentence with WILL here."
+      : "I can't find WILL in your sentence. Remember: subject + WILL + base verb." };
+  } else if (idx === 1) {
+    f = findModal(t, "neg");
+    if (!f) return { ok:false, msg: findModal(t, "aff")
+      ? "Make it negative: use WON'T (or WILL NOT) + base verb."
+      : "I can't find WON'T in your sentence. Remember: subject + WON'T + base verb." };
+  } else {
+    f = findModal(t, "any");
+    if (!f) return { ok:false, msg:"A prediction needs WILL or WON'T. Try: subject + WILL + base verb + a time expression." };
+  }
+
+  const word = f.neg ? "WON'T" : "WILL";
+  const code = verbIssue(f.verb);
+  if (code) return { ok:false, head:`Check your sentence: remember ${word} + base verb.`, msg: issueText(code, f.verb, word) };
+
+  const tips = [];
+  if (noApos) tips.push("Tip: write won't with an apostrophe (').");
+  if (f.q && !raw.endsWith("?")) tips.push("Tip: if it's a question, end it with a question mark (?).");
+  if (idx === 2 && !TIME_RE.test(raw.toLowerCase())) tips.push("Tip: you can add a time expression, like in 2050, one day or next year.");
+  const msg = idx === 2 ? `Great prediction! Your sentence uses ${word} correctly.` : `Great! Your sentence uses ${word} correctly.`;
+  return { ok:true, msg, tips };
+}
+// ANALYZER END
+
+/* =========================================================
+   3. PIXEL PET (SVG built from code)
+   ========================================================= */
+function buildPet(){
+  const OX = 6, OY = 10;
+  const R = (x,y,w,h,c) => `<rect x="${x+OX}" y="${y+OY}" width="${w}" height="${h}" class="${c}"/>`;
+  const A = (x,y,w,h,c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="${c}"/>`;
+  const insets = [null,4,3,2,2,1,1,1,1,1,1,1,2,2,3,4];
+  let body = R(6,0,8,1,"o");
+  for (let r = 1; r < 16; r++) {
+    const k = insets[r];
+    if (k === 4) body += R(4,r,2,1,"o") + R(6,r,8,1,"b") + R(14,r,2,1,"o");
+    else body += R(k,r,1,1,"o") + R(k+1,r,18-2*k,1,"b") + R(19-k,r,1,1,"o");
+  }
+  body += R(6,16,8,1,"o");
+  const feet = R(4,16,4,2,"o") + R(5,16,2,1,"b") + R(12,16,4,2,"o") + R(13,16,2,1,"b");
+  const shine = R(4,2,2,1,"l") + R(3,3,2,1,"l") + R(3,4,1,2,"l");
+  const cheeks = R(3,10,2,1,"c") + R(15,10,2,1,"c");
+  const armsDown = `<g class="arms-down">${R(-1,8,2,4,"o")+R(0,9,1,2,"b")+R(19,8,2,4,"o")+R(19,9,1,2,"b")}</g>`;
+  const armsUp = `<g class="arms-up">${R(0,2,2,4,"o")+R(1,3,1,2,"b")+R(18,2,2,4,"o")+R(18,3,1,2,"b")}</g>`;
+  const eye = dx => R(4+dx,4,4,1,"o")+R(4+dx,9,4,1,"o")+R(3+dx,5,1,4,"o")+R(8+dx,5,1,4,"o")+R(4+dx,5,4,4,"w");
+  const pupil = (dx,id) => `<g class="pup" id="${id}">${R(5+dx,6,2,2,"k")+R(6+dx,6,1,1,"w")}</g>`;
+  const eyesOpen = `<g class="e-open">${eye(0)+eye(8)+pupil(0,"pupL")+pupil(8,"pupR")}</g>`;
+  const lids = `<g class="lid">${R(4,5,4,1,"b")+R(12,5,4,1,"b")}</g>`;
+  const brows = `<g class="brow">${R(4,3,2,1,"o")+R(6,2,2,1,"o")+R(12,2,2,1,"o")+R(14,3,2,1,"o")}</g>`;
+  const closed = `<g class="e-closed">${R(3,7,6,1,"o")+R(11,7,6,1,"o")}</g>`;
+  const joy = d => R(4+d,7,1,1,"o")+R(5+d,6,2,1,"o")+R(7+d,7,1,1,"o");
+  const eyesJoy = `<g class="e-joy">${joy(0)+joy(8)}</g>`;
+  const mNeu = `<g class="m-neu">${R(8,11,4,1,"o")}</g>`;
+  const mHap = `<g class="m-hap">${R(7,10,1,1,"o")+R(12,10,1,1,"o")+R(8,11,4,1,"o")}</g>`;
+  const mSad = `<g class="m-sad">${R(8,10,4,1,"o")+R(7,11,1,1,"o")+R(12,11,1,1,"o")}</g>`;
+  const mOpen = `<g class="m-open">${R(8,10,4,2,"o")+R(9,12,2,1,"o")+R(9,11,2,1,"t")}</g>`;
+  const ant = `<g class="ant">${R(9,-3,2,3,"o")+R(8,-8,4,1,"o")+R(8,-7,1,1,"o")+R(9,-7,2,1,"y")+R(11,-7,1,1,"o")+
+    R(9,-6,2,1,"o")+R(8,-5,1,1,"o")+R(9,-5,2,1,"y")+R(11,-5,1,1,"o")+R(8,-4,4,1,"o")}</g>`;
+  const confetti = `<g class="confetti">${A(2,8,1,1,"cf1")+A(4,3,1,1,"cf2")+A(28,6,1,1,"cf3")+A(29,12,1,1,"cf1")+
+    A(1,16,1,1,"cf4")+A(30,20,1,1,"cf2")+A(26,2,1,1,"cf4")+A(2,23,1,1,"cf3")}</g>`;
+  return `<svg id="petSvg" data-mood="neutral" viewBox="0 0 32 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tik, a pixel pet with an hourglass antenna">
+    ${confetti}${ant}${armsDown}${armsUp}${body}${feet}${shine}${cheeks}${eyesOpen}${lids}${brows}${closed}${eyesJoy}${mNeu}${mHap}${mSad}${mOpen}</svg>`;
+}
+
+const $ = s => document.querySelector(s);
+$("#petHolder").innerHTML = buildPet();
+const svg = $("#petSvg");
+const petReact = $("#petReact");
+const bubble = $("#bubble");
+const pupils = [svg.querySelector("#pupL"), svg.querySelector("#pupR")];
+
+function setPupils(x, y){ pupils.forEach(p => p.style.transform = `translate(${x}px,${y}px)`); }
+function setMood(m){
+  svg.dataset.mood = m;
+  petReact.classList.toggle("party", m === "excited" || m === "celebrate");
+}
+function react(cls){
+  petReact.classList.remove("hop","shake");
+  void petReact.offsetWidth;
+  petReact.classList.add(cls);
+}
+petReact.addEventListener("animationend", e => { if (e.animationName !== "party") petReact.classList.remove("hop","shake"); });
+function say(text){
+  bubble.textContent = text;
+  bubble.classList.remove("pop"); void bubble.offsetWidth; bubble.classList.add("pop");
+}
+
+/* eyes follow the mouse; gentle idle look on touch screens */
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+window.addEventListener("pointermove", e => {
+  if (e.pointerType !== "mouse") return;
+  const r = svg.getBoundingClientRect();
+  const fx = r.left + r.width * 0.5, fy = r.top + r.height * 0.57;
+  const dx = e.clientX - fx, dy = e.clientY - fy, d = Math.hypot(dx, dy);
+  if (d < 6) { setPupils(0,0); return; }
+  const m = Math.min(1, d / 220);
+  setPupils(clamp(Math.round(dx/d*m*2)/2,-1,1), clamp(Math.round(dy/d*m*2)/2,-1,1));
+});
+document.documentElement.addEventListener("mouseleave", () => setPupils(0,0));
+if (!finePointer) {
+  const looks = [[0,0],[0,0],[-1,0],[1,0],[0,-1],[1,1],[-1,1]];
+  setInterval(() => { const l = looks[Math.floor(Math.random()*looks.length)]; setPupils(l[0], l[1]); }, 2800);
+}
+/* blinking */
+(function scheduleBlink(){
+  setTimeout(() => {
+    svg.classList.add("blink");
+    setTimeout(() => {
+      svg.classList.remove("blink");
+      if (Math.random() < 0.2) setTimeout(() => { svg.classList.add("blink"); setTimeout(() => svg.classList.remove("blink"), 110); }, 170);
+    }, 120);
+    scheduleBlink();
+  }, 2400 + Math.random() * 3200);
+})();
+
+/* =========================================================
+   4. GAME STATE + HUD
+   ========================================================= */
+const state = {};
+function shuffle(n){
+  const a = [...Array(n).keys()];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; }
+  return a;
+}
+function resetState(keepName){
+  Object.assign(state, {
+    name: keepName ? state.name : "",
+    group: keepName ? state.group : "",
+    score: 0, L: 0, Q: 0, streak: 0, answered: false,
+    results: LEVELS.map(() => []),
+    answers: LEVELS.map(() => []),
+    orders: LEVELS.map((lv, li) => lv.qs.map(q => li === 0 ? [...Array(q.opts.length).keys()] : shuffle(q.opts.length))),
+    bonus: [false,false,false], sentences: ["","",""], checked: false
+  });
+}
+resetState(false);
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const screen = $("#screen");
+
+function hud(levelText, filled){
+  $("#hud").hidden = false;
+  $("#hudName").textContent = state.name;
+  $("#hudScore").textContent = state.score;
+  $("#hudLevel").textContent = levelText;
+  const bar = $("#hudBar");
+  bar.innerHTML = Array.from({length:10}, (_,i) => `<i class="${i < filled ? "on" : ""}"></i>`).join("");
+  bar.setAttribute("aria-label", `Progress: ${filled} of 10`);
+}
+function bumpScore(){
+  const el = $("#hudScore").parentElement;
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+}
+function focusFirst(sel){ const el = screen.querySelector(sel); if (el) el.focus({ preventScroll:true }); }
+
+/* =========================================================
+   5. SCREENS
+   ========================================================= */
+function renderStart(){
+  $("#hud").hidden = true;
+  setMood("neutral"); say("Hi! I'm Tik. Ready for the future?");
+  screen.innerHTML = `
+    <h2>Hi! I'm Tik.</h2>
+    <p>I'm a pixel pet from the future. My hourglass antenna shows me what will happen next, but I need your help with <b>WILL</b> and <b>WON'T</b>!</p>
+    <div class="rules px">
+      <h3>Quick rules</h3>
+      <div class="rule"><b>Affirmative</b><span>subject + <b>will</b> + base verb</span><span class="ex">I will travel.</span></div>
+      <div class="rule"><b>Negative</b><span>subject + <b>won't</b> (will not) + base verb</span><span class="ex">She won't travel.</span></div>
+      <div class="rule"><b>Question</b><span><b>Will</b> + subject + base verb?</span><span class="ex">Will you travel? Yes, I will. / No, I won't.</span></div>
+    </div>
+    <p class="soft">3 levels with 5 questions each, then a short writing challenge. Every correct answer gives you 10 points.</p>
+    <div class="fields">
+      <div class="field">
+        <label for="nameInput">Your name and surname</label>
+        <input type="text" id="nameInput" maxlength="40" autocomplete="off" placeholder="Type your full name" value="${esc(state.name)}">
+      </div>
+      <div class="field">
+        <label for="groupInput">Your group</label>
+        <input type="text" id="groupInput" maxlength="20" autocomplete="off" placeholder="For example: 9°2" value="${esc(state.group)}">
+      </div>
+    </div>
+    <p class="err" id="startErr" hidden>Write your name so your teacher can see your results.</p>
+    <div class="actions"><button class="btn" id="startBtn">Start the quest</button></div>`;
+  const inp = $("#nameInput"), grp = $("#groupInput");
+  const go = () => {
+    const n = inp.value.trim().replace(/\s+/g, " ").slice(0,40);
+    if (!n) { $("#startErr").hidden = false; inp.focus(); return; }
+    state.name = n; state.group = grp.value.trim().slice(0,20);
+    renderLevelIntro();
+  };
+  $("#startBtn").addEventListener("click", go);
+  [inp, grp].forEach(el => el.addEventListener("keydown", e => { if (e.key === "Enter") go(); }));
+}
+
+function renderLevelIntro(){
+  const lv = LEVELS[state.L];
+  state.Q = 0;
+  hud(`LEVEL ${state.L+1} | READY`, 0);
+  setMood("neutral"); say(state.L === 0 ? `Let's go, ${state.name}!` : "New level. You can do it!");
+  screen.innerHTML = `
+    <div class="big">Level ${state.L+1}</div>
+    <h2>${lv.name}</h2>
+    <p>${lv.desc}</p>
+    <p class="soft">5 questions, ${POINTS} points each. You can also use the keys A, B and C to answer.</p>
+    <div class="actions"><button class="btn" id="goBtn">Start level ${state.L+1}</button></div>`;
+  $("#goBtn").addEventListener("click", renderQuestion);
+  focusFirst("#goBtn");
+}
+
+function renderQuestion(){
+  const lv = LEVELS[state.L], q = lv.qs[state.Q], order = state.orders[state.L][state.Q];
+  state.answered = false;
+  hud(`LEVEL ${state.L+1} | QUESTION ${state.Q+1}/5`, (state.Q+1)*2);
+  setMood("neutral"); say(pick(["Hmm… which one?","Take your time.","Read it carefully.","What do you think?"]));
+  const prompt = q.p ? `<p class="prompt">${q.p.replace("___", '<span class="blank" id="blank">&nbsp;</span>')}</p>` : "";
+  const opts = order.map((oi, pos) =>
+    `<button class="opt" data-pos="${pos}"><span class="key">${"ABC"[pos]}</span><span>${esc(q.opts[oi])}</span><span class="mark" aria-hidden="true"></span></button>`).join("");
+  screen.innerHTML = `
+    <p class="instr">${q.i}</p>
+    ${prompt}
+    <div class="opts ${q.opts.length === 2 ? "two" : ""}">${opts}</div>
+    <div id="fbZone"></div>`;
+  screen.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => answer(+b.dataset.pos)));
+}
+
+function answer(pos){
+  if (state.answered) return;
+  state.answered = true;
+  const q = LEVELS[state.L].qs[state.Q], order = state.orders[state.L][state.Q];
+  const ok = order[pos] === q.a;
+  screen.querySelectorAll(".opt").forEach((b, i) => {
+    b.disabled = true;
+    if (order[i] === q.a) { b.classList.add("is-correct"); b.querySelector(".mark").textContent = "✔"; }
+    else if (i === pos) { b.classList.add("is-wrong"); b.querySelector(".mark").textContent = "✘"; }
+  });
+  const blank = $("#blank");
+  if (blank) { blank.textContent = q.opts[q.a]; blank.classList.add("filled"); }
+
+  state.results[state.L][state.Q] = ok;
+  state.answers[state.L][state.Q] = q.opts[order[pos]];
+  if (ok) {
+    state.score += POINTS; state.streak++;
+    setMood("happy"); react("hop");
+    say(state.streak >= 3 && state.streak % 3 === 0 ? "You're doing great!" : pick(["Great job!","Nice one!","Correct!","Exactly right!"]));
+    bumpScore();
+  } else {
+    state.streak = 0;
+    setMood("sad"); react("shake");
+    say(pick(["Almost! Try again!","Almost! Read the tip.","Not this time. You'll get the next one!"]));
+  }
+  hud(`LEVEL ${state.L+1} | QUESTION ${state.Q+1}/5`, (state.Q+1)*2);
+  const last = state.Q === 4;
+  $("#fbZone").innerHTML = `
+    <div class="fb px ${ok ? "good" : "bad"}">
+      <h3>${ok ? `Correct! +${POINTS} points` : "Not quite. 0 points"}</h3>
+      <p>${q.ex}</p>
+    </div>
+    <div class="actions"><button class="btn" id="nextBtn">${last ? `Finish level ${state.L+1}` : "Next question"}</button></div>`;
+  $("#nextBtn").addEventListener("click", () => { if (last) renderLevelDone(); else { state.Q++; renderQuestion(); } });
+  focusFirst("#nextBtn");
+}
+
+function renderLevelDone(){
+  const res = state.results[state.L], got = res.filter(Boolean).length;
+  const lastLevel = state.L === LEVELS.length - 1;
+  hud(`LEVEL ${state.L+1} | COMPLETE`, 10);
+  setMood("excited"); say(got >= 4 ? "Level complete! Woohoo!" : "Level complete! Keep going!");
+  screen.innerHTML = `
+    <div class="big">Level ${state.L+1}</div>
+    <h2>Complete!</h2>
+    <div class="dots" aria-label="${got} of 5 correct">${res.map(r => `<i class="${r ? "ok" : ""}"></i>`).join("")}</div>
+    <p>You got <b>${got} of 5</b> right: +${got*POINTS} points.</p>
+    <p class="soft">${got === 5 ? "Perfect level!" : got >= 3 ? "Good work. Look at the rules again if you had doubts." : "Read the explanations again. Practice makes progress!"}</p>
+    <div class="actions"><button class="btn" id="goBtn">${lastLevel ? "Go to the writing challenge" : `Go to level ${state.L+2}`}</button></div>`;
+  $("#goBtn").addEventListener("click", () => { if (lastLevel) renderWriting(); else { state.L++; renderLevelIntro(); } });
+  focusFirst("#goBtn");
+}
+
+function renderWriting(){
+  hud("FINAL CHALLENGE | WRITING", state.bonus.filter(Boolean).length * 3 + 1);
+  setMood("neutral"); say("Your turn to write! Use your own ideas.");
+  const boxes = [
+    ["1. Write one sentence with WILL.", "Example structure: subject + will + base verb"],
+    ["2. Write one sentence with WON'T.", "Example structure: subject + won't + base verb"],
+    ["3. Write one prediction about the future.", "What will the world be like one day?"]
+  ];
+  screen.innerHTML = `
+    <h2>Final challenge: write about the future</h2>
+    <p>Write your own sentences. Any topic is OK: your plans, your family, school, technology, Uruguay in 2050… Each correct sentence gives you <b>${POINTS} bonus points</b>.</p>
+    ${boxes.map((b, i) => `
+      <div class="wbox">
+        <label for="w${i}">${b[0]}</label>
+        <textarea id="w${i}" rows="2" placeholder="${esc(b[1])}">${esc(state.sentences[i])}</textarea>
+        <div class="wfb px" id="wfb${i}" aria-live="polite"></div>
+      </div>`).join("")}
+    <div class="actions">
+      <button class="btn alt" id="checkBtn">Check my sentences</button>
+      <button class="btn" id="finishBtn" ${state.checked ? "" : "disabled"}>Finish the quest</button>
+    </div>`;
+  $("#checkBtn").addEventListener("click", checkAll);
+  $("#finishBtn").addEventListener("click", renderFinal);
+  focusFirst("#w0");
+}
+
+function checkAll(){
+  let good = 0, gained = 0;
+  for (let i = 0; i < 3; i++) {
+    const val = $("#w"+i).value;
+    state.sentences[i] = val.trim();
+    const r = checkSentence(i, val);
+    const box = $("#wfb"+i);
+    box.className = "wfb px " + (r.ok ? "good" : "bad");
+    if (r.ok) {
+      good++;
+      let extra = "";
+      if (!state.bonus[i]) { state.bonus[i] = true; state.score += POINTS; gained += POINTS; extra = ` <b>+${POINTS} bonus points</b>`; }
+      box.innerHTML = `<b>${esc(r.msg)}</b>${extra}${(r.tips||[]).map(t => `<span class="tip">${esc(t)}</span>`).join("")}`;
+    } else {
+      box.innerHTML = r.head ? `<b>${esc(r.head)}</b><span class="tip">${esc(r.msg)}</span>` : `<b>${esc(r.msg)}</b>`;
+    }
+  }
+  state.checked = true;
+  $("#finishBtn").disabled = false;
+  hud("FINAL CHALLENGE | WRITING", good * 3 + 1);
+  if (gained) bumpScore();
+  if (good === 3) { setMood("happy"); react("hop"); say("Excellent writing!"); }
+  else if (good > 0) { setMood("happy"); react("hop"); say("Good! Fix the others and check again."); }
+  else { setMood("sad"); react("shake"); say("Almost! Read the tips and try again!"); }
+}
+
+function renderFinal(){
+  ["w0","w1","w2"].forEach((id, i) => { const el = $("#"+id); if (el) state.sentences[i] = el.value.trim(); });
+  hud("QUEST COMPLETE", 10);
+  setMood("celebrate"); say("Future Master!");
+  const data = reportData();
+  const stars = data.pct >= 85 ? 3 : data.pct >= 55 ? 2 : 1;
+  const written = state.sentences.map((s, i) => s ? `<li>${esc(s)}</li>` : `<li class="soft">(sentence ${i+1} is empty)</li>`).join("");
+  screen.innerHTML = `
+    <div class="big">Future Master!</div>
+    <div class="stars" aria-label="${stars} of 3 stars">${"★".repeat(stars)}${"☆".repeat(3-stars)}</div>
+    <h2>Well done, ${esc(state.name)}!</h2>
+    <p>You finished the quest with <b>⭐ ${data.score} of ${data.max} points (${data.pct}%)</b>.</p>
+    <button class="btn btn-pdf" id="pdfBtn">DOWNLOAD MY RESULTS – PDF</button>
+    <p class="dl-status" id="dlStatus" role="status"></p>
+    <table class="tbl">
+      ${data.levels.map((lv, i) => `<tr><td>Level ${i+1}: ${esc(lv.name)}</td><td>${lv.got} / 5</td></tr>`).join("")}
+      <tr><td>Writing challenge</td><td>${state.bonus.filter(Boolean).length} / 3</td></tr>
+    </table>
+    <h3>Your sentences</h3>
+    <ol class="mine">${written}</ol>
+    <div class="final-fb px"><p><b>${esc(data.feedback.title)}</b> ${esc(data.feedback.body)}</p></div>
+    <div class="actions"><button class="btn alt" id="againBtn">Play again</button></div>`;
+  $("#pdfBtn").addEventListener("click", downloadPdf);
+  $("#againBtn").addEventListener("click", () => { resetState(true); renderLevelIntro(); });
+  focusFirst("#pdfBtn");
+}
+
+/* =========================================================
+   6. RESULTS REPORT DATA
+   ========================================================= */
+const WRITING_LABELS = ["A sentence with WILL", "A sentence with WON'T", "A prediction about the future"];
+const LEVEL_TIPS = [
+  "In Level 1, read each situation carefully to decide if something will happen or not.",
+  "In Level 2, remember: no -s, no -ing and no TO after WILL / WON'T (she will go, they won't come).",
+  "In Level 3, review questions and short answers: Will you...? Yes, I will. / No, I won't."
+];
+function plainPrompt(q){
+  return q.p ? q.p.replace(/<br\s*\/?>/g, " / ").replace(/<[^>]+>/g, "").replace("___", "_____") : q.i;
+}
+function makeFeedback(pct, levels, writingOk){
+  const first = state.name.split(" ")[0];
+  let title, parts = [], tone;
+  if (pct >= 85) { title = `Excellent work, ${first}!`; parts.push("You demonstrated a very good understanding of WILL and WON'T."); tone = "good"; }
+  else if (pct >= 60) { title = `Good work, ${first}!`; parts.push("Review the structure WILL / WON'T + base verb."); tone = "ok"; }
+  else { title = `Keep practicing, ${first}!`; parts.push("Pay special attention to the difference between WILL and WON'T, and to the structure WILL / WON'T + base verb."); tone = "low"; }
+  const gots = levels.map(l => l.got), minGot = Math.min(...gots);
+  if (minGot === 5) parts.push("You answered all the game questions correctly.");
+  else parts.push(LEVEL_TIPS[gots.indexOf(minGot)]);
+  if (writingOk === 3) parts.push("Your three sentences in the writing challenge are well built.");
+  else parts.push("In the writing challenge, check that each sentence uses WILL or WON'T followed by a base verb (for example: I will travel, she won't go).");
+  return { title, body: parts.join(" "), tone };
+}
+function reportData(){
+  const levels = LEVELS.map((lv, li) => ({
+    name: lv.name,
+    got: state.results[li].filter(Boolean).length,
+    items: lv.qs.map((q, qi) => ({
+      prompt: plainPrompt(q),
+      answer: state.answers[li][qi] != null ? state.answers[li][qi] : "(no answer)",
+      correct: q.opts[q.a],
+      ok: !!state.results[li][qi]
+    }))
+  }));
+  const correct = levels.reduce((n, l) => n + l.got, 0);
+  const writing = state.sentences.map((s, i) => {
+    const c = checkSentence(i, s);
+    const note = !s ? "Automatic check: no answer."
+      : c.ok ? "Automatic check: " + c.msg.replace(/^Great( prediction)?! /, "")
+      : "Automatic check: needs review. " + c.msg;
+    return { label: WRITING_LABELS[i], text: s, ok: c.ok, note };
+  });
+  const writingOk = writing.filter(w => w.ok).length;
+  const pct = Math.round(state.score / MAX_SCORE * 100);
+  const now = new Date(), two = n => String(n).padStart(2, "0");
+  return {
+    name: state.name, group: state.group,
+    date: `${two(now.getDate())}/${two(now.getMonth()+1)}/${now.getFullYear()} ${two(now.getHours())}:${two(now.getMinutes())}`,
+    score: state.score, max: MAX_SCORE, pct,
+    correct, incorrect: 15 - correct, levels, writing,
+    feedback: makeFeedback(pct, levels, writingOk)
+  };
+}
+function pdfFileName(){
+  const n = state.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "Student";
+  return `WILL_WONT_${n}_RESULTS.pdf`;
+}
+
+/* =========================================================
+   7. PDF GENERATOR (pure JavaScript, no libraries, works offline)
+   ========================================================= */
+const PDF = (() => {
+  const W = 595.28, H = 841.89, M = 40, CW = W - 2*M, BOTTOM = H - 56;
+  const C = { ink:"#3A3156", soft:"#6A6190", lav:"#ECE6FB", lavMid:"#CDBDF5", lavDeep:"#7E68C9", blue:"#DDE9FC",
+    mint:"#D3F1E2", mintInk:"#23664A", rose:"#FBDCE4", roseInk:"#983553", butter:"#FFF0C4", butterInk:"#C9A23A",
+    paper:"#FFFFFF", row:"#F8F5FF", petBody:"#C6B4F4", petLight:"#EFE8FF", petInk:"#2F2849", cheek:"#F4A7BF", sand:"#F7CF6A" };
+  // Helvetica / Helvetica-Bold widths for characters 32-126
+  const WR = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+  const WB = [278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584];
+  const SPECIAL = {0x2013:0x96,0x2014:0x97,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,0x2026:0x85,0x20AC:0x80,0x2022:0x95};
+  function enc(s){
+    let o = "";
+    for (const ch of String(s)) {
+      let c = ch.codePointAt(0);
+      if (SPECIAL[c]) c = SPECIAL[c];
+      else if (c === 9 || c === 10 || c === 13) c = 32;
+      else if (c < 32 || c > 255 || (c >= 127 && c < 160)) c = 63;
+      o += String.fromCharCode(c);
+    }
+    return o;
+  }
+  const cw = (c, b) => (c >= 32 && c <= 126) ? (b ? WB : WR)[c-32] : (c >= 0xC0 && c <= 0xDE) ? 722 : 556;
+  function width(e, size, b){ let w = 0; for (let i = 0; i < e.length; i++) w += cw(e.charCodeAt(i), b); return w * size / 1000; }
+  function wrap(s, size, b, maxW){
+    const lines = []; let cur = "";
+    for (let w of enc(s).split(" ")) {
+      while (width(w, size, b) > maxW) {
+        let k = w.length; while (k > 1 && width(w.slice(0, k), size, b) > maxW) k--;
+        if (cur) { lines.push(cur); cur = ""; }
+        lines.push(w.slice(0, k)); w = w.slice(k);
+      }
+      const t = cur ? cur + " " + w : w;
+      if (width(t, size, b) <= maxW) cur = t; else { lines.push(cur); cur = w; }
+    }
+    if (cur || !lines.length) lines.push(cur);
+    return lines;
+  }
+  const f = n => String(Math.round(n * 100) / 100);
+  const rgb = h => [1,3,5].map(i => (parseInt(h.substr(i, 2), 16) / 255).toFixed(3)).join(" ");
+  const pesc = e => e.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+
+  function createDoc(){
+    const pages = []; let ops = null;
+    const d = {
+      y: 0, pages,
+      page(){ ops = []; pages.push(ops); d.y = 48; },
+      use(i){ ops = pages[i]; },
+      rect(x, y, w, h, col){ ops.push(`${rgb(col)} rg ${f(x)} ${f(H - y - h)} ${f(w)} ${f(h)} re f`); },
+      frame(x, y, w, h, col, t){ t = t || 1.5; d.rect(x, y, w, t, col); d.rect(x, y + h - t, w, t, col); d.rect(x, y, t, h, col); d.rect(x + w - t, y, t, h, col); },
+      textE(x, y, e, size, b, col, align){
+        if (align === "right") x -= width(e, size, b);
+        else if (align === "center") x -= width(e, size, b) / 2;
+        ops.push(`BT /${b ? "F2" : "F1"} ${size} Tf ${rgb(col)} rg ${f(x)} ${f(H - y)} Td (${pesc(e)}) Tj ET`);
+      },
+      text(x, y, s, size, b, col, align){ d.textE(x, y, enc(s), size, b, col, align); },
+      fit(x, y, s, size, b, col, maxW){
+        let e = enc(s), sz = size;
+        while (sz > 9 && width(e, sz, b) > maxW) sz -= 0.5;
+        while (e.length > 1 && width(e, sz, b) > maxW) e = e.slice(0, -2) + ".";
+        d.textE(x, y, e, sz, b, col);
+      },
+      need(h){ if (d.y + h > BOTTOM) d.page(); }
+    };
+    return d;
+  }
+
+  function drawPet(d, x0, y0, s){
+    const R = (x, y, w, h, c) => d.rect(x0 + (x + 1) * s, y0 + (y + 8) * s, w * s, h * s, c);
+    const ins = [null,4,3,2,2,1,1,1,1,1,1,1,2,2,3,4];
+    R(6,0,8,1,C.petInk);
+    for (let r = 1; r < 16; r++) {
+      const k = ins[r];
+      if (k === 4) { R(4,r,2,1,C.petInk); R(6,r,8,1,C.petBody); R(14,r,2,1,C.petInk); }
+      else { R(k,r,1,1,C.petInk); R(k+1,r,18-2*k,1,C.petBody); R(19-k,r,1,1,C.petInk); }
+    }
+    R(6,16,8,1,C.petInk);
+    R(4,16,4,2,C.petInk); R(5,16,2,1,C.petBody); R(12,16,4,2,C.petInk); R(13,16,2,1,C.petBody);
+    R(4,2,2,1,C.petLight); R(3,3,2,1,C.petLight); R(3,4,1,2,C.petLight);
+    R(0,2,2,4,C.petInk); R(1,3,1,2,C.petBody); R(18,2,2,4,C.petInk); R(18,3,1,2,C.petBody);
+    R(3,10,2,1,C.cheek); R(15,10,2,1,C.cheek);
+    [0, 8].forEach(dx => { R(4+dx,7,1,1,C.petInk); R(5+dx,6,2,1,C.petInk); R(7+dx,7,1,1,C.petInk); });
+    R(8,10,4,2,C.petInk); R(9,12,2,1,C.petInk); R(9,11,2,1,C.cheek);
+    R(9,-3,2,3,C.petInk); R(8,-8,4,1,C.petInk); R(8,-7,1,1,C.petInk); R(9,-7,2,1,C.sand); R(11,-7,1,1,C.petInk);
+    R(9,-6,2,1,C.petInk); R(8,-5,1,1,C.petInk); R(9,-5,2,1,C.sand); R(11,-5,1,1,C.petInk); R(8,-4,4,1,C.petInk);
+  }
+
+  function serialize(pages, title){
+    const objs = [];
+    objs[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+    objs[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";
+    objs[4] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+    const kids = []; let n = 5;
+    for (const p of pages) {
+      const content = p.join("\n");
+      objs[n] = `<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
+      objs[n+1] = `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${n} 0 R >>`;
+      kids.push(`${n+1} 0 R`); n += 2;
+    }
+    objs[2] = `<< /Type /Pages /Kids [${kids.join(" ")}] /Count ${pages.length} >>`;
+    objs[n] = `<< /Title (${pesc(enc(title))}) /Creator (WILL WONT Future Quest) >>`;
+    const info = n;
+    let out = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n"; const offs = [];
+    for (let i = 1; i < objs.length; i++) { offs[i] = out.length; out += `${i} 0 obj\n${objs[i]}\nendobj\n`; }
+    const xref = out.length;
+    out += `xref\n0 ${objs.length}\n0000000000 65535 f \n`;
+    for (let i = 1; i < objs.length; i++) out += String(offs[i]).padStart(10, "0") + " 00000 n \n";
+    out += `trailer\n<< /Size ${objs.length} /Root 1 0 R /Info ${info} 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+    const bytes = new Uint8Array(out.length);
+    for (let i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i) & 255;
+    return bytes;
+  }
+
+  function report(r){
+    const d = createDoc(); d.page();
+    // header band
+    d.rect(0, 0, W, 108, C.lav);
+    for (let x = 0, i = 0; x < W; x += 8, i++) d.rect(x, 108, 8, 6, i % 2 ? C.lavMid : C.blue);
+    d.text(M, 36, "STUDENT RESULTS", 10, true, C.lavDeep);
+    d.text(M, 64, "WILL / WON'T – FUTURE QUEST", 22, true, C.ink);
+    d.text(M, 86, "English | The future with WILL / WON'T | ANEP – EBI 9th grade / UTU 2nd year", 9, false, C.soft);
+    drawPet(d, W - M - 60, 14, 2.6);
+
+    // student box
+    let y = 132;
+    d.rect(M, y, CW, 66, C.paper); d.frame(M, y, CW, 66, C.lavMid, 2);
+    [[M+16, "Student name", r.name, 250], [M+286, "Group", r.group, 92], [M+392, "Date", r.date, 112]].forEach(([x, l, v, w]) => {
+      d.text(x, y + 22, l + ":", 9, false, C.soft);
+      if (v) d.fit(x, y + 47, v, 15, true, C.ink, w);
+      else d.rect(x, y + 48, w - 10, 1, C.soft);
+    });
+
+    // score tiles
+    y = 216; const tw = (CW - 36) / 4;
+    [["Final score", `${r.score} / ${r.max}`, C.lav], ["Percentage", `${r.pct}%`, C.blue],
+     ["Correct answers", `${r.correct} / 15`, C.mint], ["Incorrect answers", `${r.incorrect} / 15`, C.rose]].forEach(([l, v, c], i) => {
+      const x = M + i * (tw + 12);
+      d.rect(x, y, tw, 68, c);
+      d.text(x + 12, y + 22, l, 9, false, C.soft);
+      d.text(x + 12, y + 52, v, 19, true, C.ink);
+    });
+
+    // level tiles
+    y = 300; const lw = (CW - 24) / 3;
+    r.levels.forEach((lv, i) => {
+      const x = M + i * (lw + 12);
+      d.rect(x, y, lw, 58, C.paper); d.frame(x, y, lw, 58, C.lavMid, 1.5);
+      d.text(x + 12, y + 20, `Level ${i+1}: ${lv.name}`, 9.5, true, C.ink);
+      lv.items.forEach((it, k) => d.rect(x + 12 + k * 14, y + 34, 10, 10, it.ok ? C.mintInk : C.roseInk));
+      d.text(x + lw - 12, y + 45, `${lv.got} / 5`, 16, true, C.lavDeep, "right");
+    });
+    d.y = 374;
+
+    const section = (title, next) => {
+      d.need(48 + (next || 60)); d.y += 6;
+      d.rect(M, d.y, 9, 9, C.lavDeep);
+      d.text(M + 16, d.y + 9, title, 12, true, C.ink);
+      d.rect(M, d.y + 17, CW, 1.5, C.lavMid);
+      d.y += 30;
+    };
+
+    // answers
+    section("ANSWERS");
+    r.levels.forEach((lv, i) => {
+      d.need(64);
+      d.text(M, d.y + 10, `Level ${i+1} – ${lv.name}`, 10.5, true, C.lavDeep); d.y += 20;
+      lv.items.forEach((it, k) => {
+        const tx = M + 34, tw2 = CW - 34 - 96;
+        const pl = wrap(it.prompt, 10, false, tw2);
+        const al = wrap("Answer: " + it.answer, 10, true, tw2);
+        const cl = it.ok ? [] : wrap("Correct answer: " + it.correct, 9.5, false, tw2);
+        const h = Math.max(34, 13 * (pl.length + al.length + cl.length) + 14);
+        d.need(h);
+        if (k % 2 === 0) d.rect(M, d.y, CW, h, C.row);
+        d.rect(M + 8, d.y + 7, 18, 18, C.lav);
+        d.text(M + 17, d.y + 19.5, String(k + 1), 9, true, C.ink, "center");
+        let yy = d.y + 18;
+        pl.forEach(l => { d.textE(tx, yy, l, 10, false, C.ink); yy += 13; });
+        al.forEach(l => { d.textE(tx, yy, l, 10, true, C.ink); yy += 13; });
+        cl.forEach(l => { d.textE(tx, yy, l, 9.5, false, C.mintInk); yy += 13; });
+        const bw = 78, bx = M + CW - bw - 8;
+        d.rect(bx, d.y + 7, bw, 18, it.ok ? C.mint : C.rose);
+        d.frame(bx, d.y + 7, bw, 18, it.ok ? C.mintInk : C.roseInk, 1);
+        d.text(bx + bw / 2, d.y + 19.5, it.ok ? "CORRECT" : "INCORRECT", 8.5, true, it.ok ? C.mintInk : C.roseInk, "center");
+        d.y += h;
+      });
+      d.y += 12;
+    });
+
+    // writing
+    section("WRITING CHALLENGE");
+    r.writing.forEach((w, i) => {
+      const sl = wrap(w.text || "(no answer)", 11, false, CW - 28);
+      const nl = wrap(w.note, 9.5, false, CW);
+      const boxH = 15 * sl.length + 16;
+      d.need(20 + boxH + 14 + 13 * nl.length + 10);
+      d.text(M, d.y + 10, `${i+1}. ${w.label}`, 10.5, true, C.ink); d.y += 18;
+      d.rect(M, d.y, CW, boxH, C.paper); d.frame(M, d.y, CW, boxH, C.lavMid, 1.5);
+      let yy = d.y + 19;
+      sl.forEach(l => { d.textE(M + 14, yy, l, 11, false, w.text ? C.ink : C.soft); yy += 15; });
+      d.y += boxH + 14;
+      nl.forEach(l => { d.textE(M, d.y, l, 9.5, false, w.ok ? C.mintInk : C.roseInk); d.y += 13; });
+      d.y += 10;
+    });
+
+    // feedback
+    const fb = r.feedback;
+    const fl = wrap(fb.body, 10.5, false, CW - 36);
+    const fh = 14 * fl.length + 42;
+    section("FEEDBACK", fh);
+    const tone = { good:[C.mint, C.mintInk], ok:[C.butter, C.butterInk], low:[C.rose, C.roseInk] }[fb.tone];
+    d.rect(M, d.y, CW, fh, tone[0]); d.rect(M, d.y, 6, fh, tone[1]);
+    d.text(M + 20, d.y + 22, fb.title, 12, true, C.ink);
+    let yy = d.y + 42;
+    fl.forEach(l => { d.textE(M + 20, yy, l, 10.5, false, C.ink); yy += 14; });
+    d.y += fh + 18;
+
+    // teacher's notes
+    d.need(100);
+    d.text(M, d.y + 10, "Teacher's notes", 10.5, true, C.ink); d.y += 18;
+    d.frame(M, d.y, CW, 72, C.lavMid, 1.5);
+    d.rect(M + 12, d.y + 24, CW - 24, 0.8, C.lavMid); d.rect(M + 12, d.y + 48, CW - 24, 0.8, C.lavMid);
+    d.y += 72;
+
+    // footer on every page
+    const total = d.pages.length;
+    for (let i = 0; i < total; i++) {
+      d.use(i);
+      d.rect(M, H - 38, CW, 1, C.lavMid);
+      d.fit(M, H - 24, `WILL / WON'T – Future Quest | ${r.name}${r.group ? " | " + r.group : ""}`, 8, false, C.soft, CW - 80);
+      d.text(W - M, H - 24, `Page ${i+1} of ${total}`, 8, false, C.soft, "right");
+    }
+    return serialize(d.pages, `WILL / WON'T – Future Quest – ${r.name}`);
+  }
+  return { report };
+})();
+
+/* =========================================================
+   8. DOWNLOAD
+   ========================================================= */
+let downloadsCap = null;
+function getDownloads(){
+  if (!downloadsCap && window.claude && typeof window.claude.use === "function") {
+    downloadsCap = Promise.resolve(window.claude.use("downloads")).catch(() => null);
+  }
+  return downloadsCap;
+}
+getDownloads();
+
+function browserSave(blob, name){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name; a.style.display = "none";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+async function downloadPdf(){
+  const btn = $("#pdfBtn"), status = $("#dlStatus");
+  const show = (t, cls) => { status.textContent = t; status.className = "dl-status " + (cls || ""); };
+  btn.disabled = true; show("Creating your PDF…");
+  try {
+    const name = pdfFileName();
+    const blob = new Blob([PDF.report(reportData())], { type: "application/pdf" });
+    const pending = getDownloads();
+    const dl = pending ? await pending : null;
+    if (dl) {
+      try { await dl.save({ filename: name, data: blob }); show(`Done! Your file ${name} was downloaded.`, "good"); }
+      catch (e) {
+        const code = e && e.code;
+        if (code === "declined") show("Download cancelled. Click the button again when you're ready.", "bad");
+        else if (code === "rate_limited") show("Please wait a moment and click again.", "bad");
+        else { browserSave(blob, name); show(`Done! Your file ${name} was downloaded.`, "good"); }
+      }
+    } else {
+      browserSave(blob, name);
+      show(`Done! Your file ${name} was downloaded.`, "good");
+    }
+  } catch (err) {
+    show("Something went wrong while creating the PDF. Please click the button again.", "bad");
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* keyboard shortcuts: A / B / C */
+document.addEventListener("keydown", e => {
+  if (/INPUT|TEXTAREA/.test(e.target.tagName) || e.ctrlKey || e.metaKey || e.altKey) return;
+  const pos = "abc".indexOf(e.key.toLowerCase());
+  if (pos < 0) return;
+  const btn = screen.querySelector(`.opt[data-pos="${pos}"]`);
+  if (btn && !btn.disabled) btn.click();
+});
+
+renderStart();
+})();
+</script>
+</body>
+</html>
